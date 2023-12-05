@@ -11,7 +11,6 @@ import java.util.concurrent.Future;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.junit.jupiter.api.Assertions.*;
 
 class ServerTest {
 
@@ -27,7 +26,7 @@ class ServerTest {
     }
 
     @Test
-    void shouldReturnExpectedSizeOfResponseList(){
+    void shouldReturnExpectedSizeOfResponseList() {
         // given
         Future<Client.Request> future = client.getExecutor().submit(client.new Request(1));
         Server.Response response = server.processRequest(future);
