@@ -1,8 +1,8 @@
 package by.clevertec.entity;
 
+import by.clevertec.exception.ClientException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -35,15 +35,18 @@ public class Client {
         accumulator = new AtomicInteger(0);
     }
 
-    @SneakyThrows
     public void sendRequest() {
-        executor.invokeAll(createRequests())
-                .stream()
-                .map(server::processRequest)
-                .forEach(response -> {
-                    accumulator.accumulateAndGet(response.message(), Integer::sum);
-                    log.info("Resource size: {}", response.message());
-                });
+        try {
+            executor.invokeAll(createRequests())
+                    .stream()
+                    .map(server::processRequest)
+                    .forEach(response -> {
+                        accumulator.accumulateAndGet(response.message(), Integer::sum);
+                        log.info("Resource size: {}", response.message());
+                    });
+        } catch (InterruptedException exception) {
+            throw new ClientException(exception);
+        }
 
         executor.shutdown();
         log.info("Client -> All requests sent. Data list size: " + data.size());
@@ -61,7 +64,7 @@ public class Client {
     @AllArgsConstructor
     public class Request implements Callable<Request> {
 
-        private int message;
+        private int dataRequest;
 
         @Override
         public Request call() {

@@ -1,13 +1,15 @@
 package by.clevertec.entity;
 
+import by.clevertec.exception.ServerException;
 import lombok.Getter;
-import lombok.SneakyThrows;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+
 @Getter
 public class Server {
 
@@ -17,15 +19,17 @@ public class Server {
         resourceList = new ArrayList<>();
     }
 
-    @SneakyThrows
     public Response processRequest(Future<Client.Request> future) {
         int delayTime = new Random().ints(100, 1000)
                 .findFirst()
                 .orElse(100);
-        TimeUnit.MILLISECONDS.sleep(delayTime);
-        int message = future.get().getMessage();
-        resourceList.add(message);
-
+        try {
+            TimeUnit.MILLISECONDS.sleep(delayTime);
+            int dataResponse = future.get().getDataRequest();
+            resourceList.add(dataResponse);
+        } catch (InterruptedException | ExecutionException ex) {
+            throw new ServerException(ex);
+        }
         return new Response(resourceList.size());
     }
 
