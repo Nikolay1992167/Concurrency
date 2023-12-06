@@ -109,9 +109,4 @@ class ClientTest {
                 .isNotNull()
                 .isGreaterThanOrEqualTo(0);
     }
-
-    @Test
-    void shouldThrowsExceptionBySendRequest() {
-
-    }
 }

@@ -26,6 +26,7 @@ public class Client {
     private final Server server;
 
     public Client(int dataListSize, int numberOfThreads) {
+
         server = new Server();
         data = new ArrayList<>(dataListSize);
         IntStream.rangeClosed(1, dataListSize)
@@ -36,6 +37,7 @@ public class Client {
     }
 
     public void sendRequest() {
+
         try {
             executor.invokeAll(createRequests())
                     .stream()
@@ -47,7 +49,6 @@ public class Client {
         } catch (InterruptedException exception) {
             throw new ClientException(exception);
         }
-
         executor.shutdown();
         log.info("Client -> All requests sent. Data list size: " + data.size());
         log.info("Server -> All requests processed. Resource list is: {}", server.getResourceList());
